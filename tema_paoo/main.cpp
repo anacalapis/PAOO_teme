@@ -17,7 +17,10 @@ class Meci{
     Meci (unsigned nr_repriza, unsigned nr_min_per_repriza, const string& nume_sport, const string& echipa1, const string& echipa2): 
         nr_reprize(nr_repriza), nr_min_per_repriza(nr_min_per_repriza), nume_sport(nume_sport), echipa1(echipa1), echipa2(echipa2)
     {
-        cout <<"Am folosit constructorul corect cu o lista de initializare \n"; 
+        cout<<"Am folosit constructorul corect cu o lista de initializare si am obtinut urmatorul obiect\n";
+        cout<<"Nume sport : "<<this->nume_sport<<"\n";
+        cout<<"Meciul are "<<this->nr_reprize<<" reprize a cate "<<this->nr_min_per_repriza<<" minute\n";
+        cout<<this->echipa1<<" - "<<this->echipa2<<endl<<endl;
     }
 
     unsigned getNr_reprize() const
@@ -49,27 +52,32 @@ class Meci{
     {
         if(repriza >0)
             nr_reprize=repriza;
+        cout<<"Setter aplicat!\n";
     }
 
     void setNr_min_per_repriza(unsigned min)
     {
         if(min >0)
             nr_min_per_repriza=min;
+        cout<<"Setter aplicat!\n";
     }
 
     void setNume_sport(string sport)
     {
         nume_sport=sport;
+        cout<<"Setter aplicat!\n";
     }
 
     void setEchipa1(string echipa)
     {
         echipa1=echipa;
+        cout<<"Setter aplicat!\n";
     }
 
     void setEchipa2(string echipa)
     {
         echipa2=echipa;
+        cout<<"Setter aplicat!\n";
     }
 
     int minute_meci(string sport)
@@ -115,8 +123,16 @@ int main()
     int folosire_egal=0;
     Meci* meci1 = new Meci(4, 10, "baschet", "Poli", "UVT");
     Meci* meci2 = new Meci(4, 10, "baschet", "Arad", "Iasi");
+    //meci1->print_detalii_meci();
+    //meci2->print_detalii_meci();
+
+    meci1->setEchipa1("Partizan");
+    meci1->setEchipa2("Barcelona");
+    meci1->setNume_sport("baschet");
+    meci1->setNr_min_per_repriza(10);
+    meci1->setNr_reprize(4);
+
     meci1->print_detalii_meci();
-    meci2->print_detalii_meci();
     
     printf("Meciul dureaza %d minute\n", meci1->minute_meci());
     printf("Meciul dureaza %d minute\n", meci1->minute_meci("fotbal"));
