@@ -14,7 +14,7 @@ class Meci{
         string echipa2;
 
     public:
-    Meci (unsigned nr_repriza, unsigned nr_min_per_repriza, const string& nume_sport, const string& echipa1, const string& echipa2): 
+    Meci (const unsigned nr_repriza, const unsigned nr_min_per_repriza, const string& nume_sport, const string& echipa1, const string& echipa2): 
         nr_reprize(nr_repriza), nr_min_per_repriza(nr_min_per_repriza), nume_sport(nume_sport), echipa1(echipa1), echipa2(echipa2)
     {
         cout<<"Am folosit constructorul corect cu o lista de initializare si am obtinut urmatorul obiect\n";
@@ -135,7 +135,7 @@ int main()
     meci1->print_detalii_meci();
     
     printf("Meciul dureaza %d minute\n", meci1->minute_meci());
-    printf("Meciul dureaza %d minute\n", meci1->minute_meci("fotbal"));
+    printf("Meciul dureaza %d minute\n", meci1->minute_meci("baschet"));
 
     meci1=meci2;
     folosire_egal=1;
