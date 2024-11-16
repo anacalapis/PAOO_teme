@@ -16,8 +16,8 @@ class Activitate
         nr_reprize(nr_reprize), nr_min_per_repriza(nr_min_per_repriza), nume_sport(nume_sport)
     {
         cout<<"S-a folosit constructorul din CLASA DE BAZA"<<endl;
-        cout<<"Nume sport : "<<this->nume_sport<<endl;
-        cout<<"Nr reprize: "<<this->nr_reprize<<" de cate "<<this->nr_min_per_repriza<<" minute"<<endl<<endl;
+        cout<<"Nume sport : "<<this->nume_sport;
+        cout<<". Nr reprize: "<<this->nr_reprize<<" de cate "<<this->nr_min_per_repriza<<" minute"<<endl<<endl;
     }
 
     Activitate(const Activitate& act):
@@ -28,8 +28,10 @@ class Activitate
     //Activitate(const Activitate& act)= delete;
 
     Activitate(Activitate&& act):
-        nr_reprize(act.nr_reprize), nr_min_per_repriza(act.nr_min_per_repriza), nume_sport(act.nume_sport)
+        nr_reprize(std::move(act.nr_reprize)), nr_min_per_repriza(std::move(act.nr_min_per_repriza)), nume_sport(std::move(act.nume_sport))
     {
+        act.nr_reprize=0;
+        act.nr_min_per_repriza=0;
         cout<<"S-a folosit MOVE CONSTRUCTORUL din CLASA DE BAZA"<<endl;
     }
 
@@ -70,7 +72,7 @@ class Activitate
     }
     void print_detalii()
     {
-        cout<<"Activitatea este "<<nume_sport<<" si dureaza "<<nr_reprize<<" reprize a cate "<<nr_min_per_repriza<<" minute"<<endl<<endl;
+        cout<<"Activitatea este "<<nume_sport<<" si dureaza "<<nr_reprize<<" reprize a cate "<<nr_min_per_repriza<<" minute"<<endl;
     }
 
     ~Activitate()
@@ -90,8 +92,8 @@ class Meci: public Activitate{
         Activitate( nume_sport, nr_reprize, nr_min_per_repriza),echipa1(echipa1), echipa2(echipa2)
     {
         cout<<"Am folosit constructorul din SUBCLASA\n";
-        cout<<"Nume sport : "<<this->nume_sport<<"\n";
-        cout<<"Meciul are "<<this->nr_reprize<<" reprize a cate "<<this->nr_min_per_repriza<<" minute\n";
+        cout<<"Nume sport : "<<this->nume_sport;
+        cout<<". Meciul are "<<this->nr_reprize<<" reprize a cate "<<this->nr_min_per_repriza<<" minute\n";
         cout<<this->echipa1<<" - "<<this->echipa2<<endl<<endl;
     }
 
@@ -103,8 +105,10 @@ class Meci: public Activitate{
     //Meci (const Meci& meci)= delete;
     
     Meci (Meci&& meci):
-        Activitate(move(meci)), echipa1(meci.echipa1), echipa2(meci.echipa2)
+        Activitate(std::move(meci)), echipa1(std::move(meci.echipa1)), echipa2(std::move(meci.echipa2))
     {
+        // meci.echipa1=nullptr;
+        // meci.echipa2=nullptr;
         cout<<"S-a apelat MOVE CONSTRUCTOR din SUBCLASA"<<endl;
     }
     //Meci (Meci&& meci)= delete;
@@ -164,7 +168,7 @@ class Meci: public Activitate{
 
 Meci& Meci::operator=(const Meci& m)
 {
-    printf("aici\n");
+    printf("AICI S-A FOLOSIT OPERATORUL\n");
     nr_min_per_repriza=m.nr_min_per_repriza;
     nr_reprize=m.nr_reprize;
     nume_sport=m.nume_sport;
@@ -187,6 +191,11 @@ int main()
 
     Meci meci5 = Meci(55, 30, "handbal", "Gyor", "CSM");
     Meci meci6 = std::move(meci5);
+    printf("Starea obiectelor dupa ce s-a folosit move constructor\n");
+    meci5.print_detalii();
+    //meci6.print_detalii();
+    
+    
     //meci1->print_detalii_meci();
     //meci2->print_detalii_meci();
 
@@ -203,11 +212,12 @@ int main()
 
     // meci1->print_detalii();
     // meci2->print_detalii();
-    // *meci1=*meci2;
-    // folosire_egal=1;
+    *meci1=*meci2;
+    folosire_egal=1;
 
-    // meci1->print_detalii_meci();
-    // meci2->print_detalii_meci();
+    meci1->print_detalii();
+    meci2->print_detalii();
+   
     if(folosire_egal==1)
     {
         delete meci1;
@@ -219,5 +229,6 @@ int main()
     }
     delete act1;
     delete act2;
+    
     return 0;
 }   
