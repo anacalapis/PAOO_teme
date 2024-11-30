@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/emanuel/Documents/PAOO_ANA/Teme_Ana/PAOO_teme-main/tema_paoo/main.cpp
+iostream
+-
+string
+-
+chrono
+-
+ctime
+-
+string.h
+-
+mutex
+-
+thread
+-
+memory
+-
+

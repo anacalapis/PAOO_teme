@@ -3,6 +3,9 @@
 #include <chrono>
 #include <ctime>  
 #include <string.h>
+#include <mutex>
+#include <thread>
+#include <memory>
 
 using  namespace std; 
 class Activitate
@@ -16,8 +19,8 @@ class Activitate
         nr_reprize(nr_reprize), nr_min_per_repriza(nr_min_per_repriza), nume_sport(nume_sport)
     {
         cout<<"S-a folosit constructorul din CLASA DE BAZA"<<endl;
-        cout<<"Nume sport : "<<this->nume_sport;
-        cout<<". Nr reprize: "<<this->nr_reprize<<" de cate "<<this->nr_min_per_repriza<<" minute"<<endl<<endl;
+        //cout<<"Nume sport : "<<this->nume_sport;
+        //cout<<". Nr reprize: "<<this->nr_reprize<<" de cate "<<this->nr_min_per_repriza<<" minute"<<endl<<endl;
     }
 
     Activitate(const Activitate& act):
@@ -86,6 +89,10 @@ class Meci: public Activitate{
         
         string echipa1;
         string echipa2;
+        int scor_e1;
+        int scor_e2;
+        std::mutex mtx;
+        
 
     public:
     Meci (unsigned nr_reprize, unsigned nr_min_per_repriza, const string& nume_sport, const string& echipa1, const string& echipa2): 
@@ -135,6 +142,14 @@ class Meci: public Activitate{
         cout<<"Setter aplicat!\n";
     }
 
+    void setScor(int a, int b)
+    {
+        mtx.lock();
+        scor_e1 =a;
+        scor_e2 =b;
+        cout<<"Scor: "<<scor_e1<<" - "<<scor_e2<<endl;
+        mtx.unlock();
+    }
     int minute_meci(string sport)
     {
         if(sport=="baschet")
@@ -161,7 +176,7 @@ class Meci: public Activitate{
    ~Meci()
    {
     cout<<"S-a apelat destructorul din SUBCLASA"<<endl;
-    print_detalii();
+    //print_detalii();
    }
 
 };
@@ -177,6 +192,11 @@ Meci& Meci::operator=(const Meci& m)
     return *this;
 }
 
+void threadFunction(Meci& obj, int scorA, int scorB) 
+{
+    obj.setScor(scorA, scorB);
+}
+
 int main()
 {
     int folosire_egal=0;
@@ -185,16 +205,45 @@ int main()
     Activitate* act1 = new Activitate("baschet", 11, 10);
     Activitate* act2 = new Meci(22,45, "fotbal", "City", "United");
     //act2->print_detalii();
+    cout<<"COPY CONSTRUCTOR"<<endl;
     Meci meci4 = Meci(44,45, "fotbal", "Real", "Barca");
     Meci meci3 = meci4;
     meci3.print_detalii();
 
+    cout<<"MOVE CONSTRUCTOR"<<endl;
     Meci meci5 = Meci(55, 30, "handbal", "Gyor", "CSM");
     Meci meci6 = std::move(meci5);
     printf("Starea obiectelor dupa ce s-a folosit move constructor\n");
     meci5.print_detalii();
     //meci6.print_detalii();
     
+    
+    cout<<"INCEP THREAD-URILE"<<endl;
+    Meci meci7 = Meci(2, 45, "fotbal", "Steaua", "Dinamo");
+    Meci meci8 = Meci(2, 45, "fotbal", "Crvena", "Partizan");
+    thread t1(threadFunction, ref(meci7), 1, 0);
+    thread t2(threadFunction, ref(meci8), 0, 2);
+    t1.join();
+    t2.join();
+    
+    cout<<"\nUNIQUE POINTER"<<endl;
+    unique_ptr<Meci> meci9(new Meci(4, 10, "baschet", "Cluj", "Oradea"));
+    // meci9->print_detalii();
+    unique_ptr<Meci> meci10;
+    meci10= move(meci9);
+   // meci9->print_detalii();
+    meci10->print_detalii();
+    
+    cout<<"SHARED POINTER"<<endl;
+    shared_ptr<Meci> meci11(new Meci(2,30,"handbal", "CSM", "Rapid"));
+    shared_ptr<Meci> meci12 =meci11;
+    cout<<"Pointer use count inaintea blocului "<<meci11.use_count()<<endl;
+    {
+        shared_ptr<Meci> meci13 =meci11;
+        shared_ptr<Meci> meci14 =meci11;
+        cout<<"Pointer use count in interiorul blocului "<<meci13.use_count()<<endl;
+    }
+    cout<<"Pointer use count dupa iesirea din bloc "<<meci12.use_count()<<endl<<endl;
     
     //meci1->print_detalii_meci();
     //meci2->print_detalii_meci();
@@ -212,12 +261,13 @@ int main()
 
     // meci1->print_detalii();
     // meci2->print_detalii();
-    *meci1=*meci2;
-    folosire_egal=1;
+    // *meci1=*meci2;
+    // folosire_egal=1;
 
-    meci1->print_detalii();
-    meci2->print_detalii();
+    // meci1->print_detalii();
+    // meci2->print_detalii();
    
+    cout<<"ZONA DESTRUCTORILOR"<<endl;
     if(folosire_egal==1)
     {
         delete meci1;
@@ -231,4 +281,4 @@ int main()
     delete act2;
     
     return 0;
-}   
+}

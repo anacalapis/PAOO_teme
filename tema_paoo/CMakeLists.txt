@@ -4,4 +4,6 @@ project(app_project)
 
 add_executable(myapp main.cpp)
 
-install(TARGETS myapp DESTINATION bin)
+find_package(Threads REQUIRED)
+
+target_link_libraries(myapp Threads::Threads)
